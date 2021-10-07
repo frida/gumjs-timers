@@ -1,63 +1,71 @@
-var scope = (typeof global !== "undefined" && global) ||
-            (typeof self !== "undefined" && self) ||
-            window;
-var apply = Function.prototype.apply;
-
-// DOM APIs, for completeness
-
-exports.setTimeout = function() {
-  return new Timeout(apply.call(setTimeout, scope, arguments), clearTimeout);
-};
-exports.setInterval = function() {
-  return new Timeout(apply.call(setInterval, scope, arguments), clearInterval);
-};
-exports.clearTimeout =
-exports.clearInterval = function(timeout) {
-  if (timeout) {
-    timeout.close();
+class Timeout {
+  constructor(id, clearFn) {
+    this._id = id;
+    this._clearFn = clearFn;
   }
-};
 
-function Timeout(id, clearFn) {
-  this._id = id;
-  this._clearFn = clearFn;
+  ref() {
+  }
+
+  unref() {
+  }
+
+  close() {
+    this._clearFn(this._id);
+    this._id = null;
+  }
 }
-Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-Timeout.prototype.close = function() {
-  this._clearFn.call(scope, this._id);
-};
 
-// Does not start the time, just sets up the members needed.
-exports.enroll = function(item, msecs) {
-  clearTimeout(item._idleTimeoutId);
+export function setTimeout(...args) {
+  return new Timeout(globalThis.setTimeout(...args), globalThis.clearTimeout);
+}
+
+export function setInterval(...args) {
+  return new Timeout(globalThis.setInterval(...args), globalThis.clearInterval);
+}
+
+export function clearTimeout(timeout) {
+  timeout?.close();
+}
+
+export const clearInterval = clearTimeout;
+
+export function enroll(item, msecs) {
+  globalThis.clearTimeout(item._idleTimeoutId);
+  item._idleTimeoutId = null;
   item._idleTimeout = msecs;
-};
+}
 
-exports.unenroll = function(item) {
-  clearTimeout(item._idleTimeoutId);
+export function unenroll(item) {
+  globalThis.clearTimeout(item._idleTimeoutId);
+  item._idleTimeoutId = null;
   item._idleTimeout = -1;
-};
+}
 
-exports._unrefActive = exports.active = function(item) {
-  clearTimeout(item._idleTimeoutId);
+export function active(item) {
+  globalThis.clearTimeout(item._idleTimeoutId);
+  item._idleTimeoutId = null;
 
-  var msecs = item._idleTimeout;
+  const msecs = item._idleTimeout;
   if (msecs >= 0) {
-    item._idleTimeoutId = setTimeout(function onTimeout() {
-      if (item._onTimeout)
-        item._onTimeout();
-    }, msecs);
+    item._idleTimeoutId = globalThis.setTimeout(() => { item._onTimeout(); }, msecs);
   }
-};
+}
 
-// setimmediate attaches itself to the global object
-require("setimmediate");
-// On some exotic environments, it's not clear which object `setimmediate` was
-// able to install onto.  Search each possibility in the same order as the
-// `setimmediate` library.
-exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
-                       (typeof global !== "undefined" && global.setImmediate) ||
-                       (this && this.setImmediate);
-exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
-                         (typeof global !== "undefined" && global.clearImmediate) ||
-                         (this && this.clearImmediate);
+export const _unrefActive = active;
+
+export const setImmediate = globalThis.setImmediate;
+export const clearImmediate = globalThis.clearImmediate;
+
+export default {
+  setTimeout,
+  setInterval,
+  clearTimeout,
+  clearInterval,
+  enroll,
+  unenroll,
+  active,
+  _unrefActive,
+  setImmediate,
+  clearImmediate,
+};
