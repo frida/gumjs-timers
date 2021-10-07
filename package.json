@@ -1,13 +1,15 @@
 {
-  "author": "J. Ryan Stinnett <jryans@gmail.com> (https://convolv.es/)",
-  "name": "timers-browserify",
-  "description": "timers module for browserify",
-  "version": "2.0.12",
-  "homepage": "https://github.com/jryans/timers-browserify",
-  "bugs": "https://github.com/jryans/timers-browserify/issues",
+  "name": "@frida/timers",
+  "description": "Node.js's timers module for Frida",
+  "version": "3.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/frida/gumjs-timers",
+  "bugs": "https://github.com/frida/gumjs-timers/issues",
   "repository": {
     "type": "git",
-    "url": "git://github.com/jryans/timers-browserify.git"
+    "url": "https://github.com/frida/gumjs-timers.git"
   },
   "contributors": [
     "Colton Brown <coltonTB@me.com>",
@@ -25,29 +27,14 @@
     "Thiago Felix <thiago@thiagofelix.com>",
     "wtgtybhertgeghgtwtg <wtgtybhertgeghgtwtg@gmail.com>"
   ],
-  "main": "main.js",
-  "dependencies": {
-    "setimmediate": "^1.0.4"
-  },
-  "devDependencies": {
-    "browserify": "~1.10.16",
-    "connect": "~2.30.2"
-  },
-  "optionalDependencies": {},
-  "engines": {
-    "node": ">=0.6.0"
-  },
-  "keywords": [
-    "timers",
-    "browserify",
-    "browser"
+  "main": "index.js",
+  "files": [
+    "/index.js"
   ],
-  "license": "MIT",
-  "jspm": {
-    "map": {
-      "./main.js": {
-        "node": "@node/timers"
-      }
-    }
-  }
+  "optionalDependencies": {},
+  "keywords": [
+    "timers"
+  ],
+  "author": "J. Ryan Stinnett <jryans@gmail.com> (https://convolv.es/)",
+  "license": "MIT"
 }
